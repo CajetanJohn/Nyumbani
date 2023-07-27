@@ -1,0 +1,67 @@
+
+/*when loading feed*/
+div[feed='loading']{
+  animation: loading 2s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {opacity: 1;}
+  50% {opacity: 0.5;}
+  100% {opacity: 1;}
+}
+
+div[feed='loading'] .displayed-feed-body{
+  border-bottom: 1.5px solid lightgrey;
+}
+div[feed='loading'] .fa{
+  display: none;
+}
+
+div[feed='loading'] .displayed-feed-header{
+  background: lightgrey;
+}
+
+div[feed='loading'] .feed-info-more *,
+div[feed='loading'] .feed-info *,
+div[feed='loading'] .feed-select-button *{
+  opacity: 0;
+}
+
+div[feed='loading'] .feed-info{
+  min-width: 35%;
+  min-height: 15px;
+  background: lightgrey;
+  border-radius: 5px;
+  margin-bottom: 7px;
+}
+
+div[feed='loading'] .feed-info.name{
+  width: 65%;
+}
+
+div[feed='loading'] .feed-info.rating{
+  min-width: 45%;
+}
+
+div[feed='loading'] .feed-selection div *{
+  width: 60%;
+  background: lightgrey;
+  color: lightgrey;
+  border-radius: 5px;
+}
+
+div[feed='loading'] .feed-select-button{
+  background:lightgrey;
+}
+
+div[feed='loading'] .feed-selection{
+  background: none;
+}
+
+div[feed='loading'] .feed-info-more{
+  background: lightgrey;
+}
+
+div[feed='loading'] .feed-information-container{
+  display: none;
+}
