@@ -1,0 +1,37 @@
+.feed-information{
+  display: flex;
+  flex-direction:column;
+  width: 100%;
+  height: fit-content;
+}
+
+.feed-info-details{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.feed-info-details > *{
+  margin: 5px;
+  min-height: 25px;
+  height: fit-content;
+  justify-content: flex-start;
+  align-items: center;
+  word-wrap: wrap;
+  word-break: none;
+  width: calc(50% - 30px);
+  border-radius: 5px;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+
+.feed-info-map{
+  margin-top: 10px;
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
+  border-radius: 5px;
+}

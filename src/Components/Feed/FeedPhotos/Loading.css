@@ -1,0 +1,11 @@
+div[feed='loading'].gallery-container > *{
+  background: lightgrey;
+  border-radius: 5px;
+  color: lightgrey;
+}
+
+div[feed='loading'].gallery-container .image-information{
+  display: none;
+}
+
+

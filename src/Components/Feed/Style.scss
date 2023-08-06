@@ -1,0 +1,12 @@
+@mixin random-width {
+  $minWidth: 45%;
+  $maxWidth: 100%;
+  $randomPercentage: random() * 100;
+
+  width: max($minWidth, min($maxWidth, #{$randomPercentage}%));
+}
+
+div[feed='loading'] .random {
+  @include random-width;
+  background: red;
+}

@@ -1,0 +1,8 @@
+div[feed='loading'].feed-map{
+  background: lightgrey;
+  color: lightgreys;
+  border-radius: 10px;
+}
+div[feed='loading'].feed-map *{
+  display: none;
+}

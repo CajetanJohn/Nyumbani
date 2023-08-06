@@ -50,8 +50,13 @@ div[feed='loading'] .feed-selection div *{
   border-radius: 5px;
 }
 
-div[feed='loading'] .feed-select-button{
+div[feed='loading'] .feed-select.view button {
   background:lightgrey;
+  width: 80%;
+  border-radius: 5px;
+  height: 100%;
+  border: none;
+  outline: none;
 }
 
 div[feed='loading'] .feed-selection{

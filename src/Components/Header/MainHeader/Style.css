@@ -1,0 +1,51 @@
+.main-header {
+  width: 100%;
+  height: fit-content;
+}
+
+.logo-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+.logo{
+  font-size: 25px;
+}
+.menu{
+  display: flex;
+  width: fit-content;
+  gap: 20px;
+}
+.menu i{
+  font-size: 30px;
+}
+
+.filter-header{
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--box-shadow);
+  margin: 10px 0;
+  padding:0 10px;
+  border-radius: 7px;
+}
+
+.filter-search{
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+
+.filter-selection{
+  border-top: 1px solid grey;
+  display: flex;
+  height: 40px;
+}
+
+.filter-selection > div{
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  color: var(--secondary-color);
+}

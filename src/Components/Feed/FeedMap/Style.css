@@ -1,0 +1,10 @@
+.feed-map{
+  width: calc(100% - 20px);
+  min-height: 50vh;
+  height: fit-content;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
