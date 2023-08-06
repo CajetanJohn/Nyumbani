@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {Feed, FeedLoop} from  './Components/Feed/Feed';
+import {FeedContainer, FeedLoop} from  './Components/Feed/Feed';
 import Header from './Components/Header/Header';
 import {Modal} from './Components/Modal/Modal'
 
