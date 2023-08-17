@@ -1,36 +1,88 @@
-import React, { useState, useEffect, useRef } from 'react';
-import MainHeader from './MainHeader/MainHeader';
-import MiniHeader from './MiniHeader/MiniHeader';
+import React, { Component } from 'react';
+import './Style.css';
 
-const Header = () => {
-  const [showMiniHeader, setShowMiniHeader] = useState(false);
-  const mainHeaderRef = useRef(null);
-  const mainHeaderHeight = mainHeaderRef.current?.clientHeight || 0;
-  const scrollThreshold = 50; // Adjust this threshold as needed
+export class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.mainHeaderRef = React.createRef();
+    this.state = {
+      showMiniHeader: false,
+    };
+  }
 
-  const handleScroll = () => {
+  componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll = () => {
+    const mainHeaderHeight = this.mainHeaderRef.current?.clientHeight || 0;
+    const scrollThreshold = 50;
     const currentScrollY = window.scrollY;
-    
+
     if (currentScrollY > mainHeaderHeight) {
-      setShowMiniHeader(true);
+      this.setState({ showMiniHeader: true });
     } else if (currentScrollY < mainHeaderHeight + scrollThreshold) {
-      setShowMiniHeader(false);
+      this.setState({ showMiniHeader: false });
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
+  render() {
+    const { modal, screenSize } = this.props;
+    const { showMiniHeader } = this.state;
+
+    if (modal && screenSize === 'mobile') {
+      return null;
+    }
+
+    const MainHeader = React.forwardRef((props, ref) => {
+      const handleMenuClick = () => {
+        // Add logic to show/hide the menu
+      };
+
+      return (
+        <div className='main-header' ref={ref}>
+          <div className='logo-header'>
+            <div className='logo'>Nyumbani</div>
+            <div className='menu'>
+              <i onClick={handleMenuClick} className="fa fa-user-o" aria-hidden="true"></i>
+              <i className="fa fa-bars" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div className='filter-header'>
+            <div className='filter-search'>Destination</div>
+            <div className='filter-selection'>
+              <div><b>Sort</b></div>
+              <div><b>Filter</b></div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+
+    const MiniHeader = ({ showMiniHeader }) => {
+      return (
+        <div className={`mini-header ${showMiniHeader ? 'slide-down' : ''}`}>
+          <i className="fa fa-search" aria-hidden="true"></i>
+          <div>
+            <div className='mini-filter-search'>Destination</div>
+            <div className='mini-filter-selection'>
+              <span><b>Sort</b></span>
+              <span><b>Filter</b></span>
+            </div>
+          </div>
+        </div>
+      );
     };
-  }, []);
 
-  return (
-    <div className="App">
-      <MainHeader ref={mainHeaderRef} />
-      <MiniHeader showMiniHeader={showMiniHeader} />
-    </div>
-  );
-};
-
-export default Header;
+    return (
+      <div className="header">
+        <MainHeader ref={this.mainHeaderRef} />
+        <MiniHeader showMiniHeader={showMiniHeader} />
+      </div>
+    );
+  }
+}
