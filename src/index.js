@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {FeedContainer, FeedLoop} from  './Components/Feed/Feed';
+import {Feed, FeedLoop} from  './Components/Feed/Feed';
 import Header from './Components/Header/Header';
-import {Modal} from './Components/Modal/Modal'
+import {Modal} from './Components/Modal/Modal';
+import App from './Feed';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-  <Header/>
-  <FeedLoop/>
+  <App/>
   </React.StrictMode>
 );

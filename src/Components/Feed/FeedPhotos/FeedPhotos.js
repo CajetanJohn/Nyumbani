@@ -4,11 +4,11 @@ import './Loading.css';
 
 const images =[]
 
-export const FeedPhotos =({data,state})=>{
+export const FeedPhotos =()=>{
   const galleryRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [scrollAmount, setScrollAmount] = useState(0);
-  const [loading, setLoading]=useState(state);
+  const [loading, setLoading]=useState(true);
 
   
   

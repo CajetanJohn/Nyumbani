@@ -3,8 +3,8 @@ import './Style.css';
 import './Loading.css';
 import {Modal} from '../../Modal/Modal';
 
-export const FeedReviews =({data,state})=>{
-  const [loading, setLoading]=useState(state);
+export const FeedReviews =()=>{
+  const [loading, setLoading]=useState(false);
   const [showMore, setShowMore] = useState(false);
   const targetDivRef = useRef(null);
   

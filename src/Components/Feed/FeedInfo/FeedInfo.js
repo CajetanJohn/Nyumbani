@@ -2,8 +2,8 @@ import {useRef, useState} from 'react';
 import './Style.css';
 import './Loading.css';
 
-export const FeedInfo = ({data,state})=>{
-  const [loading, setLoading] = useState(state);
+export const FeedInfo = ()=>{
+  const [loading, setLoading] = useState(true);
   return(
     <div feed={loading && 'loading'} className='feed-information'>
       <div className='feed-info-details'>
