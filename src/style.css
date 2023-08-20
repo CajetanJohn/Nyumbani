@@ -1,0 +1,23 @@
+.ui{
+  position: relative;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.feeds-container{
+  width: inherit;
+  position: relative;
+  height: 100vh !important;
+  overflow: scroll;
+  background: red;
+}
+
+div[data-container='feed']{
+  height: auto !important;
+  position: absolute;
+  min-height: 100dvh;
+  background: green;
+  left: 0; top: 0;
+  width: 100vw;
+}

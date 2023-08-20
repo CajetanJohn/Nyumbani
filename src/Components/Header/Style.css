@@ -1,6 +1,7 @@
 .main-header {
   width: 100%;
   height: fit-content;
+  background: white;
 }
 
 .logo-header{
@@ -51,9 +52,8 @@
 }
 
 .mini-header {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: fixed !important;
+  top: 0; left: 0;
   width: 100%;
   height: fit-content;
   background-color: white;
@@ -64,6 +64,7 @@
   align-items: center;
   padding: 5px 10px;
   box-shadow: var(--box-shadow);
+  z-index: 1;
 }
 
 .mini-header.slide-down {

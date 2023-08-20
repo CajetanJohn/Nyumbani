@@ -48,7 +48,8 @@ export const FeedReviews = ({ toggleModal, toggleModalWithData }) => {
     <div>
       <Review index={0} />
       <br/>
-      <button onClick={handleToggle}>Show more reviews</button>
+      <br/>
+      <div className="display-more-button"><span onClick={handleToggle}><b>Show more reviews</b></span></div>
     </div>
   );
 };

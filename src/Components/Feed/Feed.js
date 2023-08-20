@@ -97,8 +97,8 @@ export class Feed extends React.Component {
             <div className='feed-information-body'>
               {activeSpan === 0 && <FeedInfo />}
               {activeSpan === 1 && <FeedPhotos />}
+               {activeSpan === 3 && <FeedReviews toggleModal={toggleModal} toggleModalWithData={toggleModalWithData}/>}
               {activeSpan === 2 && <FeedMap />}
-               {activeSpan === 3 && <FeedReviews toggleModal={toggleModal} toggleModalWithData={this.props.toggleModalWithData}/>}
             </div>
             <div className='feed-information-footer'>
               <button onClick={this.toggleShowInfo}>close</button>
@@ -151,12 +151,10 @@ export const Feeds = () => {
   }, [feedItemsCount]);
 
   return (
-    <div>
       <div ref={feedContainerRef} className='feeds-container'>
         {[...Array(feedItemsCount)].map((_, index) => (
           <Feed key={index} count={index + 1} />
         ))}
       </div>
-    </div>
   );
 };
