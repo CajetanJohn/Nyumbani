@@ -5,6 +5,7 @@ import {FeedInfo} from './FeedInfo/FeedInfo';
 import {FeedPhotos} from './FeedPhotos/FeedPhotos';
 import {FeedReviews} from './FeedReviews/FeedReviews';
 import {FeedMap} from './FeedMap/FeedMap';
+import {Icons} from '../../Assets/Icons/Icons';
 
 export class Feed extends React.Component {
   constructor(props) {
@@ -44,8 +45,8 @@ export class Feed extends React.Component {
             <img srcset="" src="" alt=""/>
           </div>
           <div className='feed-images-control'>
-            <i class="fa fa-chevron-left dashed" aria-hidden="true"></i>
-            <i class="fa fa-chevron-right dashed"aria-hidden="true"></i>
+           <img className='icon dashed' src={Icons.left}/>
+           <img className='icon dashed' src={Icons.right}/>
           </div>
           <div className='feed-like-button'>
             <i class="fa fa-heart-o" aria-hidden="true"></i>
@@ -71,20 +72,19 @@ export class Feed extends React.Component {
             <div><span><b>boy</b></span></div>
             <div><span>hello</span></div>
             <div className='feed-select price'><h1>yo</h1></div>
-            <div className='feed-select view'><button>
-              <span>view deal  <i class="fa fa-chevron-down" aria-hidden="true"></i></span>
+            <div className='feed-select view'><button onClick={this.toggleShowInfo}>
+            {!shownInfo ? (
+              <span><b>View ...</b></span>
+            ) : (
+              <span><b> Show less </b></span>
+            )}
             </button>
             </div>
           </div>
         </div>
         
-          <div onClick={this.toggleShowInfo} className='feed-info-more'>
+          <div className='feed-info-more'>
             <span>here <b>hello</b></span>
-            {shownInfo ? (
-              <span><b><i className="fa fa-chevron-up" aria-hidden="true"></i></b></span>
-            ) : (
-              <span><b><i className="fa fa-chevron-down" aria-hidden="true"></i></b></span>
-            )}
           </div>
         </div>
 

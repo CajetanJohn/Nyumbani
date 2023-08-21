@@ -18,6 +18,7 @@ export class Map extends React.Component {
     return (
       <div>
         {/*showMap && <Feed toggleModal={toggleModal} />*/}
+        mapped
         <button onClick={this.toggleMap}>Toggle Map</button>
       </div>
     );

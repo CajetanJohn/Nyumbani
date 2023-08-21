@@ -1,36 +1,47 @@
-import React, { useState, useEffect, useRef, createRef } from 'react';
-import ReactDOM from 'react-dom/client';
-import {Feed} from  './Components/Feed/Feed';
-import {Header} from './Components/Header/Header';
-import {Modal} from './Components/Modal/Modal';
-import {Map} from './Components/Map/Map';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ReactDOM from 'react-dom';
+import { Feed } from './Components/Feed/Feed';
+import { Header } from './Components/Header/Header';
+import { Modal } from './Components/Modal/Modal';
+import { Map } from './Components/Map/Map';
 import './style.css';
+import {Menu} from './Components/Header/Menu/Menu'
 
-export const getScreenSize = () => {
-    const width = window.innerWidth;
-    if (width <= 768) return 'mobile';
-    if (width <= 1024) return 'laptop';
-    return 'larger';
-  };
-  
+const getScreenSize = () => {
+  const width = window.innerWidth;
+  if (width <= 768) return 'mobile';
+  if (width <= 1024) return 'laptop';
+  return 'larger';
+};
+
 const App = () => {
   const [modal, setModal] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [mapped, setMap] = useState(false);
   const [screenSize, setScreenSize] = useState(getScreenSize());
   const [modalData, setModalData] = useState(null);
   const feedContainerRef = useRef(null);
   const [feedItemsCount, setFeedItemsCount] = useState(50);
   const maxFeeds = 150;
   const stepSize = 50;
-  
 
-  const toggleModal = () => {
-    setModal(!modal);
-  };
+  const toggleModal = useCallback(() => {
+    setModal((prevModal) => !prevModal);
+  }, []);
 
-  const toggleModalWithData = (data) => {
+  const toggleModalWithData = useCallback((data) => {
     setModalData(data);
     toggleModal();
-  };
+  }, [toggleModal]);
+
+  const toggleMap = useCallback(() => {
+    setMap((prevMap) => !prevMap);
+  }, []);
+  
+  const toggleMenu = useCallback(() => {
+    setMenu((prevMenu) => !prevMenu); 
+  }, []); 
+
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -79,16 +90,31 @@ const App = () => {
 
   return (
     <div className='ui'>
-       <div data-container='scroll'  className='feeds-container'>
-        <Map toggleModal={toggleModal} />
-        <div ref={feedContainerRef} data-container='feed'>
-        <Header modal={modal} screenSize={screenSize} />
+      <div data-container='scroll' className='feeds-container'>
+        
+        <div data-container='map' data-shown={`${screenSize === 'mobile' && !mapped ? 'hidden' : 'shown'}`} >
+          <Map toggleModal={toggleModal} />
+        </div>
+        
+        <div ref={feedContainerRef} data-container='feed' data-shown={`${screenSize === 'mobile' && !mapped ? 'shown' : 'hidden'}`}>
+          <Header modal={modal} toggleMenu={toggleMenu} screenSize={screenSize} />
           {[...Array(feedItemsCount)].map((_, index) => (
             <Feed key={index} count={index + 1} toggleModal={toggleModal} toggleModalWithData={toggleModalWithData} />
-        ))}
+          ))}
         </div>
+        
       </div>
-      {modal && <Modal toggleModal={toggleModal} modalData={modalData} />}
+
+      {screenSize === 'mobile' && (
+        <button className='map-toggle-button' onClick={toggleMap}>
+          {mapped ? 'List' : 'Map'}
+        </button>
+      )}
+      
+      {menu && <Menu screen={screenSize} toggleMenu={toggleMenu}/>}
+      
+      {modal && <Modal screen={screenSize} toggleModal={toggleModal} modalData={modalData} />}
+      
     </div>
   );
 };
@@ -96,6 +122,6 @@ const App = () => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App/>
+    <App />
   </React.StrictMode>
 );

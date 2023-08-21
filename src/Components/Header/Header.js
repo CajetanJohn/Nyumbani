@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Menu } from './Menu/Menu';
 import './Style.css';
+import {Icons} from '../../Assets/Icons/Icons';
 
 export class Header extends Component {
   constructor(props) {
@@ -34,7 +36,7 @@ export class Header extends Component {
 
 
   render() {
-    const { modal, screenSize } = this.props;
+    const { modal, screenSize, toggleMenu } = this.props;
     const { showMiniHeader } = this.state;
 
     if (modal && screenSize === 'mobile') {
@@ -43,7 +45,7 @@ export class Header extends Component {
 
     return (
       <div className="header">
-        <MainHeader ref={this.mainHeaderRef} />
+        <MainHeader ref={this.mainHeaderRef} toggleMenu={toggleMenu} />
         <MiniHeader showMiniHeader={showMiniHeader} />
       </div>
     );
@@ -52,16 +54,17 @@ export class Header extends Component {
 
 const MainHeader = React.forwardRef((props, ref) => {
   const handleMenuClick = () => {
-    // Add logic to show/hide the menu
+    props.toggleMenu();
   };
+
 
   return (
     <div className='main-header' ref={ref}>
       <div className='logo-header'>
         <div className='logo'>Nyumbani</div>
         <div className='menu'>
-          <i onClick={handleMenuClick} className="fa fa-user-o" aria-hidden="true"></i>
-          <i className="fa fa-bars" aria-hidden="true"></i>
+          <img onClick={handleMenuClick} className='icon' src={Icons.user} alt="Icon 1" />
+          <img onClick={handleMenuClick} className='icon' src={Icons.menu} alt="Icon 1" />
         </div>
       </div>
       <div className='filter-header'>

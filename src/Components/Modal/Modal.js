@@ -3,10 +3,10 @@ import './Style.css';
 
 export class Modal extends React.Component {
   render() {
-    const { modalData } = this.props;
+    const { modalData, screen } = this.props;
 
     return (
-      <div className="modal">
+      <div className={`modal ${screen}`}>
         <div className='modal-header'>
           <span onClick={this.props.toggleModal} className='modal-close-button dashed'>
             <i class="fa fa-times" aria-hidden="true"></i>
