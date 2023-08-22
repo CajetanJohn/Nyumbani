@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@350&display=swap');
+
+body, html{
+  padding: 0;
+  margin: 0;
+}
+*{
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.feeds-container{
+  width: 100vw;
+  position: relative;
+  height: 100vh !important;
+  overflow: scroll;
+  display: flex;
+}
+
+div[data-container='feed']{
+  height: auto !important;
+  position: absolute;
+  min-height: 100dvh;
+  left: 0; top: 0;
+}
+
+div[data-container='map']{
+  
+}
+
+.map-toggle-button{
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 15px;
+  border: none;
+  outline: none;
+  background: var(--secondary-color);
+  border-radius: 10px;
+  color: white;
+  font-size: 19px;
+  display: flex;
+  align-items: center !important;
+  box-shadow: var(--box-shadow);
+  }
+  
+  div[data-shown='shown'] {
+    display: block;
+  }
+  
+  div[data-shown='hidden'] {
+  display: none;
+}
+
+.map-mobile, .feed-mobile{
+  width: 100%;
+  height: 50vh;
+}
+.map-laptop, .map-larger{
+  position: fixed;
+  right: 0;
+}
+
+.map-laptop, .map-larger, .feed-laptop, .feed-larger{
+  width: 50vw;
+  height: 100vh;
+}
