@@ -1,6 +1,7 @@
 import React from 'react';
 import './Style.css';
-import {Icons} from '../../../Assets/Icons/Icons'
+import {Icons} from '../../../Assets/Icons/Icons';
+import CreateForm from '../../../Modules/Upload/Form_upload';
 
 export class Menu extends React.Component {
   constructor(props) {
@@ -47,6 +48,9 @@ export class Menu extends React.Component {
             <div onClick={() => this.handleItemClick('Language')} className={activeItem === 'Language' ? 'active' : ''}>
               Language 
             </div>
+            <div onClick={() => this.handleItemClick('Upload_form')} className={activeItem === 'Upload_form' ? 'active' : ''}>
+              Host rental 
+            </div>
             <div onClick={() => this.handleItemClick('Log out')} className={activeItem === 'Log out' ? 'active' : ''}>
               <b>Log out</b>
             </div>
@@ -64,6 +68,8 @@ export class Menu extends React.Component {
         return <LogOutComponent />;
       case 'Affiliation':
         return <AffiliationComponent />;
+        case 'Upload_form':
+        return <CreateForm />;
       default:
         return null;
     }

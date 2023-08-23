@@ -98,7 +98,7 @@ const App = () => {
         </div>
         
         <div className={`feed-${screenSize}`} ref={feedContainerRef} data-container='feed' data-shown={`${screenSize !== 'mobile' || !mapped ? 'shown' : 'hidden'}`}>
-        {screenSize === 'mobile' && <Header modal={modal} toggleMenu={toggleMenu} screenSize={screenSize} />}
+        {<Header modal={modal} toggleMenu={toggleMenu} screenSize={screenSize} />}
           {[...Array(feedItemsCount)].map((_, index) => (
             <Feed key={index} count={index + 1} toggleModal={toggleModal} toggleModalWithData={toggleModalWithData} />
           ))}

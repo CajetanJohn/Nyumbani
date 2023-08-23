@@ -6,7 +6,6 @@
   min-height: 100svh;
   position: fixed;
   top: 0;left: 0;
-  background: white;
   position: fixed;
   top: 0;left: 0;
   background: white;
@@ -17,6 +16,9 @@
   padding: 0 15px;
   display: flex;
   flex-direction: column;
+  height: auto;
+  flex: 1;
+  overflow: scroll;
 }
 .menu-body .options{
   display: flex;
