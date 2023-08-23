@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Style.css';
 import axios from 'axios';
 
 class CreateForm extends Component {
@@ -227,7 +228,7 @@ class CreateForm extends Component {
 
     inputs.forEach(input => {
       if (!input.value) {
-        isValid = true;
+        isValid = false;
         input.classList.add('invalid-input');
       } else {
         input.classList.remove('invalid-input');
@@ -244,7 +245,7 @@ class CreateForm extends Component {
       rules: parsedRules,
       pricing: this.state.pricing,
       details: {
-        agency: this.state.agency ? 'ABC Rentals' : '',
+        agency: this.state.agency ? 'No agency registered' : '',
         contact: this.state.selectedContacts,
         agencyLink: 'https://www.abcrentals.com',
       },
@@ -252,10 +253,11 @@ class CreateForm extends Component {
     if (this.state.agency) {
       updatedInformation.details.agencyDetails = this.state.agencyDetails;
     }
-
-    // Send data to API endpoint
+    
+    API_URL = "http://localhost:5000";
+    
     axios
-      .post('API_ENDPOINT_URL', updatedInformation)
+      .post(`${this.API_URL}/api/submit/`, updatedInformation)
       .then(response => {
         alert('Form submitted successfully!');
         console.log(response.data);
@@ -294,7 +296,9 @@ class CreateForm extends Component {
           <input data-needed="required" type="text" placeholder="Latitude" value={formData.location.latitude} onChange={(e) => this.handleLocationChange('latitude', e.target.value)} />
           <input data-needed="required" type="text" placeholder="Longitude" value={formData.location.longitude} onChange={(e) => this.handleLocationChange('longitude', e.target.value)} />
           <input data-needed="required" type="text" placeholder="Residence" value={formData.location.residence} onChange={(e) => this.handleLocationChange('residence', e.target.value)} />
-          <button onClick={() => this.handleNextStep(1)}>Next</button>
+          <div className="form-control">
+            <button className="next-button" onClick={() => this.handleNextStep(1)}>Next</button>
+          </div>
         </div>
       )}
       {step === 2 && (
@@ -337,9 +341,9 @@ class CreateForm extends Component {
               </>
             )}
           </div>
-          <div className="step-buttons">
-            <button onClick={this.handlePrevStep}>Previous</button>
-            <button onClick={() => this.handleNextStep(2)}>Next</button>
+          <div className="form-control">
+            <button className="prev-button" onClick={this.handlePrevStep}>Back</button>
+            <button className="next-button" onClick={() => this.handleNextStep(2)}>Next</button>
           </div>
         </div>
       )}
@@ -435,10 +439,11 @@ class CreateForm extends Component {
           </div>
         </div>
         
-        <div className="step-buttons">
-          <button onClick={this.handlePrevStep}>Previous</button>
-          <button onClick={this.handleSubmit}>Submit</button>
+        <div className="form-control">
+          <button className="prev-button" onClick={this.handlePrevStep}>Back</button>
+          <button className="next-button" onClick={this.handleSubmit}>Submit</button>
         </div>
+        
       </div>)}
 
     </div>
