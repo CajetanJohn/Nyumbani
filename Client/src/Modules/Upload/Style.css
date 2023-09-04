@@ -1,89 +1,16 @@
-
-
-.create-form-container{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: relative;
-  height: fit-content !important;
-  min-height: inherit;
-  flex: 1;
-  background: none;
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0; 
 }
 
-.form-step{
-  display: flex;
-  height: fit-content !important;
-  min-height: inherit;
-  flex-direction: column;
-  gap: 10px;
-  width: inherit !important;
-  background: none;
-  margin-bottom: 50px;
+.masonry-item {
+  margin-bottom: 0;
+  break-inside: avoid-column;
 }
 
-.form-step input,
-.input-label{
-  min-height: 25px;
-  width: auto  !important;
-  border: 1px solid black;
-  outline: none;
-  background: none;
-  color: black;
-  font-size: 16px;
-  padding: 5px;
-  flex: 1;
-}
-#image-upload{
-  display: none;
-}
-
-
-.form-control{
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  bottom: 20px;
-}
-
-.form-control button{
-  padding: 5px 10px;
-  font-size: 19px;
-  outline: none;
-  border: none;
-  color: white;
-  background: black;
-}
-.form-control .next-button{
-  margin-left: auto;
-}
-.form-control .prev-button{
-  margin-right: auto;
-}
-.uploaded-images{
-  width: 100%;
-  height: 100px;
-
-}
-
-.uploaded-image, .image-data img{
-  max-width: 200px !important;
-  height: 100px;
-  overflow: hidden;
-  position: relative;
-}
-
-.image-link{
-  padding: 5px 10px;
-  background: white;
-  color: black;
-}
-
-.add-image{
-  width: calc(100% - 20px);
-  position: absolute;
-  bottom: 30px;
-  padding: 10px;
+.uploaded-image{
+  width: 100px;
+  height: 200px;
+  aspect-ratio: 3/2;
 }

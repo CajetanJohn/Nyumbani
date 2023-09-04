@@ -5,9 +5,9 @@ import axios from 'axios';
 class CreateForm extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       step: 1,
+      updatedInformation:{},
       formData: {
         name: '',
         location: {
@@ -15,6 +15,15 @@ class CreateForm extends Component {
           longitude: '',
           residence: '',
         },
+      },
+      agency: false,
+      agencyDetails: '',
+      decodedRules: [],
+      houseCategory: '',
+      pricing: {
+        price: '',
+        rentDueDate: '',
+        fineIfRentExceeded: '',
       },
       currentImage: { Image: '', links: {} },
       images: [],
@@ -24,28 +33,17 @@ class CreateForm extends Component {
         'water',
         'pool',
         'socials',
-        // Add more amenities...
       ],
       selectedAmenities: [],
       contactPlatformSuggestions: [
         'WhatsApp',
         'Instagram',
         'Facebook',
-        // Add more contact platforms...
       ],
       selectedContacts: {},
       contactPlatformDetail: '',
-      pricing: {
-        price: '',
-        rentDueDate: '',
-        fineIfRentExceeded: '',
-      },
       rentFine: false,
-      agency: false,
-      agencyDetails: '',
       rulesText: '',
-      decodedRules: [],
-      houseCategory: '',
       houseCategorySuggestions: [
         'Single Room',
         'Bedsitter',
@@ -55,7 +53,7 @@ class CreateForm extends Component {
       ],
     };
   }
-
+  
   handleInputChange = (field, value) => {
     this.setState(prevState => ({
       formData: {
@@ -228,7 +226,7 @@ class CreateForm extends Component {
 
     inputs.forEach(input => {
       if (!input.value) {
-        isValid = false;
+        isValid = true;
         input.classList.add('invalid-input');
       } else {
         input.classList.remove('invalid-input');
@@ -239,25 +237,15 @@ class CreateForm extends Component {
   };
 
   handleSubmit = () => {
-    const parsedRules = this.state.decodedRules.map(rule => rule.slice(1)); // Remove '#'
-    const updatedInformation = {
-      amenities: this.state.selectedAmenities,
-      rules: parsedRules,
-      pricing: this.state.pricing,
-      details: {
-        agency: this.state.agency ? 'No agency registered' : '',
-        contact: this.state.selectedContacts,
-        agencyLink: 'https://www.abcrentals.com',
-      },
-    };
-    if (this.state.agency) {
-      updatedInformation.details.agencyDetails = this.state.agencyDetails;
-    }
+    const parsedRules = this.state.decodedRules.map(rule => rule.slice(1));
+    /*if (this.state.agency) {
+      updatedInformation.details.agencyDetails = this.state.agencyDetails;}*/
     
-    API_URL = "http://localhost:5000";
+    
+    let API_URL = "";
     
     axios
-      .post(`${this.API_URL}/api/submit/`, updatedInformation)
+      .post(`${API_URL}/api/submit/`, this.updatedInformation)
       .then(response => {
         alert('Form submitted successfully!');
         console.log(response.data);
