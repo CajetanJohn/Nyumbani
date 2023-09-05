@@ -1,83 +1,116 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Style.css';
 
 function ImageUpload() {
-  const [images, setImages] = useState([]);
+  const [imgSrc, setImgSrc] = useState('https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-default-placeholder.png');
+  const [imgList, setImgList] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(null);
 
-  const handleImageUpload = (event) => {
-    const selectedImages = Array.from(event.target.files);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
 
-    const newImages = selectedImages.map((image) => {
-      return {
-        file: URL.createObjectURL(image),
-        properties: {
-          text: '',
-        },
-        detected: false,
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const newImgList = [...imgList, { src: event.target.result, text: '', showTextarea: false }];
+        setImgList(newImgList);
+        setActiveIndex(newImgList.length - 1);
       };
-    });
 
-    setImages([...images, ...newImages]);
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleTextChange = (index, text) => {
-    const updatedImages = [...images];
-    updatedImages[index].properties.text = text;
-    setImages(updatedImages);
+  const handleImageClick = (index) => {
+    setImgSrc(imgList[index].src)
+    setActiveIndex(index);
   };
 
-  const handleDetectProperties = (index) => {
-    const updatedImages = [...images];
-    const text = updatedImages[index].properties.text;
+  const handleRemoveImage = (index) => {
+    const newImgList = [...imgList];
+    newImgList.splice(index, 1);
+    setImgList(newImgList);
 
-    const hashtags = [];
-    const links = [];
-
-    const words = text.split(' ');
-    words.forEach((word) => {
-      if (word.startsWith('#')) {
-        hashtags.push(word.substring(1));
-      } else if (word.startsWith('@')) {
-        links.push(word.substring(1));
-      }
-    });
-
-    updatedImages[index].properties.hashtags = hashtags;
-    updatedImages[index].properties.links = links;
-    updatedImages[index].detected = true;
-
-    setImages(updatedImages);
+    if (newImgList.length > 0) {
+      setActiveIndex(0);
+    } else {
+      setActiveIndex(null);
+    }
   };
 
-  const handleLogData = () => {
-    console.log(images);
+  const handleTextChange = (index, newText) => {
+    const newImgList = [...imgList];
+    newImgList[index].text = newText;
+    setImgList(newImgList);
   };
+
+  const handleToggleTextarea = (index) => {
+    const newImgList = [...imgList];
+    newImgList[index].showTextarea = !newImgList[index].showTextarea;
+    setImgList(newImgList);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const initWidth = document.querySelector('.img-preview-big').offsetWidth;
+      document.querySelector('.img-preview-big').style.height = initWidth + 'px';
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <div>
-      <div className="image-input">
-        <input type="file" accept="image/*" multiple onChange={handleImageUpload}/>
-      </div>
-      <div className="image-preview">
-        {images.map((image, index) => (
-          <div key={index}>
-            <img className="uploaded-image" src={image.file} alt={`Image ${index}`} />
-            <textarea
-              placeholder="Enter text (e.g., #hashtag @link)"
-              value={image.properties.text}
-              onChange={(e) => handleTextChange(index, e.target.value)}
-            />
-            {image.detected ? (
-              <div>
-                <button onClick={() => handleDetectProperties(index)}>
-                  Confirm Detection
-                </button>
+    <div className="main-wrapper">
+      <div className="img-upload-plugin">
+        <div className="img-upload-handler">
+          <div className="img-preview-big">
+            <img src={imgSrc} alt="Preview" />
+            {activeIndex !== null && (
+              <div className="img-delete" onClick={() => handleRemoveImage(activeIndex)}>
+                <img src="https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-delete-icon.png" alt="Delete" />
               </div>
-            ) : null}
+            )}
           </div>
-        ))}
+        </div>
+        <div className="img-preview-operate">
+          <div className="img-holder">
+            {imgList.map((img, index) => (
+              <div key={index} className={`img-preview-small ${index === activeIndex ? 'img-small-selected' : ''}`} onClick={() => handleImageClick(index)}>
+                <img src={img.src} alt="Preview" />
+              </div>
+            ))}
+          </div>
+          <button className="img-add-more" onClick={() => document.querySelector('input[type="file"]').click()}>
+            <img src="https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-add-more-btn.png" alt="Add" />
+          </button>
+        </div>
+        <input type="file" name="img-upload-input" style={{ display: 'none' }} onChange={handleFileChange} />
       </div>
-      <button onClick={handleLogData}>Log Data</button>
+      <div className="text-preview">
+        {activeIndex !== null && (
+          <div className="formatted-links">
+            {imgList[activeIndex].showTextarea ? (
+              <textarea
+                value={imgList[activeIndex].text}
+                onChange={(e) => handleTextChange(activeIndex, e.target.value)}
+                placeholder="Enter text..."
+              ></textarea>
+            ) : (
+              imgList[activeIndex].text.split('\n').map((line, index) => (
+                <p key={index}>{line}</p>
+              ))
+            )}
+            <button className="toggle-textarea" onClick={() => handleToggleTextarea(activeIndex)}>
+              {imgList[activeIndex].showTextarea ? 'Hide Textarea' : 'Show Textarea'}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

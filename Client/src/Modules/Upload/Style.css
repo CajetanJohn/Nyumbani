@@ -1,16 +1,120 @@
-.masonry {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0; 
+.main-wrapper{
+  background: red;
+  width: 100vw;
+  position: relative;
+}
+.img-preview-big {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px;
+  position: relative;
+  background: green;
 }
 
-.masonry-item {
-  margin-bottom: 0;
-  break-inside: avoid-column;
+.img-preview-big img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
-.uploaded-image{
-  width: 100px;
-  height: 200px;
-  aspect-ratio: 3/2;
+.img-holder{
+  display: flex;
+  padding: 2px;
+  height: fit-content;
+  background: yellow;
+}
+
+.img-preview-operate {
+  height: fit-content;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex !important;
+  background: green;
+}
+
+.img-preview-small {
+  display: flex;
+  flex-direction: column;
+  margin-right: 5px;
+  min-height: 50px;
+  height: fit-content;
+  width: 50px;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.img-preview-small img {
+  height: calc(50px - 4px);
+  width: calc(100% - 4px);
+  object-fit: cover;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.img-preview-operate button {
+  padding: 0px;
+  margin: 0px;
+  background: transparent;
+  border: none;
+  height: 50px;
+  width: 50px;
+}
+
+.img-preview-operate button img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.img-preview-operate::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
+}
+
+.img-preview-operate::-webkit-scrollbar {
+  height: 6px;
+  background-color: #F5F5F5;
+}
+
+.img-preview-operate::-webkit-scrollbar-thumb {
+  background-color: #2F4356;
+}
+
+.img-delete {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.img-delete img {
+  height: 50px;
+  width: 50px;
+}
+
+.img-small-active {
+  outline: 2px solid;
+}
+
+.img-small-selected {
+  outline: 2px solid;
+}
+
+.img-preview-big{
+	max-width: 250px !important;
+}
+
+
+.img-upload-plugin{
+  max-width: 250px;
 }
