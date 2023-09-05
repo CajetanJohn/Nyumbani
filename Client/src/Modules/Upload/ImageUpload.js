@@ -1,31 +1,57 @@
 import React, { useState, useEffect } from 'react';
+import EXIF from 'exif-js'; // Import the exif-parser library
 import './Style.css';
 
+const imagePlaceholder='https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-default-placeholder.png';
+
 function ImageUpload() {
-  const [imgSrc, setImgSrc] = useState('https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-default-placeholder.png');
+  const [imgSrc, setImgSrc] = useState(imagePlaceholder);
   const [imgList, setImgList] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
     if (file) {
-      const reader = new FileReader();
+      const imageSrc = URL.createObjectURL(file);
 
-      reader.onload = (event) => {
-        const newImgList = [...imgList, { src: event.target.result, text: '', showTextarea: false }];
+      // Use exif-js to extract date information
+      EXIF.getData(file, function () {
+        const imageDate = EXIF.getTag(this, 'DateTimeOriginal') || '';
+
+        // Create the uploaded image object
+        const uploadedImage = {
+          src: imageSrc,
+          links: [],
+          uploadDate: Date.now(),
+          imageDate,
+          user: 'admin',
+        };
+
+        // Add the uploaded image to the state
+        setUploadedImages([...uploadedImages, uploadedImage]);
+
+        const newImgList = [...imgList, { src: imageSrc, text: '', showTextarea: false }];
         setImgList(newImgList);
+        setImgSrc(imageSrc);
         setActiveIndex(newImgList.length - 1);
-      };
-
-      reader.readAsDataURL(file);
+      });
     }
   };
-
+  
   const handleImageClick = (index) => {
-    setImgSrc(imgList[index].src)
+    setImgSrc(imgList[index].src);
     setActiveIndex(index);
   };
+
+  const handleToggleTextarea = (index) => {
+    const newImgList = [...imgList];
+    newImgList[index].showTextarea = !newImgList[index].showTextarea;
+    setImgList(newImgList);
+  };
+
+  
 
   const handleRemoveImage = (index) => {
     const newImgList = [...imgList];
@@ -37,32 +63,35 @@ function ImageUpload() {
     } else {
       setActiveIndex(null);
     }
+
+    const newUploadedImages = [...uploadedImages];
+    newUploadedImages.splice(index, 1);
+    setUploadedImages(newUploadedImages);
+    if (index > 0) {
+      handleImageClick(index - 1);
+    } else{
+      setImgSrc(imagePlaceholder)
+    }
   };
 
   const handleTextChange = (index, newText) => {
     const newImgList = [...imgList];
     newImgList[index].text = newText;
+
+    // Parse user input for links (assuming links are separated by newlines)
+    const newLinks = newText.split('\n').map((line) => {
+      return { url: line, description: '' };
+    });
+
+    // Update the links property of the uploaded image
+    const updatedUploadedImage = { ...uploadedImages[index], links: newLinks };
+    const newUploadedImages = [...uploadedImages];
+    newUploadedImages[index] = updatedUploadedImage;
+
     setImgList(newImgList);
+    setUploadedImages(newUploadedImages);
   };
 
-  const handleToggleTextarea = (index) => {
-    const newImgList = [...imgList];
-    newImgList[index].showTextarea = !newImgList[index].showTextarea;
-    setImgList(newImgList);
-  };
-
-  useEffect(() => {
-    const handleResize = () => {
-      const initWidth = document.querySelector('.img-preview-big').offsetWidth;
-      document.querySelector('.img-preview-big').style.height = initWidth + 'px';
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   return (
     <div className="main-wrapper">
@@ -72,7 +101,7 @@ function ImageUpload() {
             <img src={imgSrc} alt="Preview" />
             {activeIndex !== null && (
               <div className="img-delete" onClick={() => handleRemoveImage(activeIndex)}>
-                <img src="https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-delete-icon.png" alt="Delete" />
+              <i class="fa fa-trash" aria-hidden="true"></i>
               </div>
             )}
           </div>
@@ -106,7 +135,7 @@ function ImageUpload() {
               ))
             )}
             <button className="toggle-textarea" onClick={() => handleToggleTextarea(activeIndex)}>
-              {imgList[activeIndex].showTextarea ? 'Hide Textarea' : 'Show Textarea'}
+              {imgList[activeIndex].showTextarea ? 'Hide' : 'Customize'}
             </button>
           </div>
         )}
