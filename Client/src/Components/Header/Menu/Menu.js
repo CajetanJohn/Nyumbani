@@ -1,7 +1,7 @@
 import React from 'react';
 import './Style.css';
 import {Icons} from '../../../Assets/Icons/Icons';
-import ImageUpload from '../../../Modules/Upload/ImageUpload';
+import RentalForm from '../../../Modules/Upload/rntl_input';
 
 export class Menu extends React.Component {
   constructor(props) {
@@ -69,7 +69,7 @@ export class Menu extends React.Component {
       case 'Affiliation':
         return <AffiliationComponent />;
         case 'Upload_form':
-        return <ImageUpload />;
+        return <RentalForm />;
       default:
         return null;
     }
