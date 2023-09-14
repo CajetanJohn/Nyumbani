@@ -139,25 +139,23 @@ export function AutoInput({name, label, required, type, options, onChange}){
   );
 }
 
-export function FormInput({name, defaultValue, label,required, type, onChange}) {
-  const [value, setValue] = useState(defaultValue || '');
-  const [validity, setValidity] = useState(required ? {isValid:false,message:''} : {isValid:true, message: ''});/*valid in this case is an object*/
-
-  const handleChange = (e) => {
-    if(defaultValue){
-      setValue(defaultValue);
-      return
-    }
-    setValue((prevValue)=>e.target.value);
-    setValidity(validate(name,type,required,e.target.value))
-    onChange(name, e.target.value, validity);
-  };
+export function FormInput({name, type, value, label, required, onChange, disabled}) {
+  const [valid, setValidity] = useState({isValid: false, message:''});
+  const [inputValue, setInputValue] = useState(value);
   
+  const handleInputChange=(e)=>{
+    setInputValue(e.target.value);
+    setValidity(Validate(name, type, required, e.target.value));
+  }
+  
+  useEffect(()=>{
+    onChange(name, inputValue);
+  },[valid])
   
   return (
-    <div className={`form-input-container ${!validity.isValid && 'invalid'}`}>
-      <label>{label}: {!validity.isValid && validity.message}</label>
-      <input disabled={defaultValue} name={name} type={type} value={defaultValue ? defaultValue : value} onChange={handleChange} />
+    <div className={`form-input-container ${!valid.isValid && 'invalid'}`}>
+      <label>{label}: {!valid.isValid && valid.message}</label>
+      <input disabled={disabled || false} name={name} type={type} value={inputValue} data_required={required || false} onChange={(e)=>{handleInputChange(e)}} />
     </div>
   );
 }
@@ -361,53 +359,65 @@ export function Review ({ name, type, label, required, onChange }){
   );
 };
 
-export const validate = (name,type,required,value) => {
-  if (required) {
-    if (value.trim() === '') {
-      return {
-        isValid: false, message: `${name} is required.`,
-      };
-    }
+function Validate(inputName, type, value) {
+  const error = { isValid: false, message: '' };
+  if(!required){
+    return error;
   }
-  return {
-    isValid: true,
-    message: '',
-  };
+  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  const textRegex = /^[A-Za-z\s]+$/;
+  const numberRegex = /^\d+$/;
+
+  switch (type) {
+    case 'email':
+      if (!emailRegex.test(value)) {
+        error.message = 'Invalid email format';
+      } else {
+        error.isValid = true;
+      }
+      break;
+
+    case 'text':
+      if (!textRegex.test(value)) {
+        error.message = 'Invalid text format';
+      } else {
+        error.isValid = true;
+      }
+      break;
+
+    case 'number':
+      if (!numberRegex.test(value)) {
+        error.message = 'Invalid number format';
+      } else {
+        error.isValid = true;
+      }
+      break;
+
+    default:
+      console.error('Invalid validation type');
+  }
+
+  return error;
 }
 
+  
 export function RentalForm() {
-  const [formData, setFormData] = useState({});
-  const [error, setError] = useState({});
+  const [formData, setFormData] = useState({
+    rnt_name:'',
+    rnt_pricing:''
+  });
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (inputName, value, validity) => {
-  const updatedError = { ...error };
-  if (validity && validity.isValid) {
-    delete updatedError[inputName];
-  } else {
-    updatedError[inputName] = validity ? validity.message : null;
-  }
-  setFormData({ ...formData, [inputName]: value });
-  setError(updatedError);
-};
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Check if there are any errors in the error object
-    const hasErrors = Object.values(error).some((errorMsg) => errorMsg !== null);
-    
-    if (!hasErrors) {
-      console.log(formData); // Submit the form
-    } else {
-      console.log('Form has errors. Cannot submit.'); // Handle the case where there are errors
-    }
+  const handleChange = (inputName,value) => {
+    setFormData({ ...formData, [inputName]: value });
   };
+  
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <FormInput name='rentalName' label='Arp/Flat Name' type='text' defaultValue='' onChange={handleChange} />
-        <FormInput name='rentalPricing' label='Rental pricing' type='number' defaultValue='1209' onChange={handleChange}/>
+      <form >
+        <FormInput name='rentalName' label='Arp/Flat Name' type='text' value={formData.rnt_name} onChange={handleChange} required/>
+        <FormInput name='rentalPricing' label='Rental pricing' type='number' value={formData.rnt_pricing || ''} onChange={handleChange}/>
         {/*<FormInput name='rentalCategory' label='Rental Cartegory' type='text' onChange={handleChange} />
         <FormInput name='Agency' label='Agent involved' type='checkbox' onChange={handleChange} />
         <OptionalInputs name='RentDue' options={['date', 'amount']} onChange={handleChange}/>
@@ -418,7 +428,7 @@ export function RentalForm() {
         <TextareaRulesInput name='rules' onChange={handleChange}/>*/}
         <button type="submit">Submit</button>
       </form>
-      <FormDisplay formData={formData} error={error}/>
+      <FormDisplay formData={formData} error={errors}/>
     </>
   );
 }
@@ -437,4 +447,6 @@ export function FormDisplay({ formData, error }) {
 
 
 export default RentalForm;
+
+
 
