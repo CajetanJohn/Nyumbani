@@ -63,7 +63,7 @@ const MainHeader = React.forwardRef((props, ref) => {
       <div className='logo-header'>
         <div className='logo'>Nyumbani</div>
         <div className='menu'>
-          <img onClick={handleMenuClick} className='icon' src={Icons.user} alt="Icon 1" />
+          <img className='icon' src={Icons.user} alt="Icon 1" />
           <img onClick={handleMenuClick} className='icon' src={Icons.menu} alt="Icon 1" />
         </div>
       </div>

@@ -94,7 +94,7 @@ export class Menu extends React.Component {
   }
 }
 
-// Example components to render when menu items are clicked
+
 const LanguageComponent = () => <div>
   <h5> Language </h5>
 </div>;

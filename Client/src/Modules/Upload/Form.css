@@ -1,0 +1,110 @@
+:root{
+  --textColor:black;
+  --bg-primary:white;
+  --border:black;
+  --invalid-input:red
+}
+form{
+  /*background: grey;*/
+  width: calc(100% - 20px);
+}
+
+.form-input-container{
+  display: flex;
+  position: relative;
+  border: 1px solid var(--border);
+  margin: 10px;
+  background: var(--bg-primary);
+  width: inherit;
+}
+
+.form-input-container.invalid{
+  border: 1px solid var(--invalid-input);
+}
+
+.form-input-container input,
+.form-input-container textarea{
+  width: 100%;
+  height: 45px;
+  border-radius: 0px;
+  font-size: 18px;
+  padding: 0 15px;
+  border: none;
+  background: transparent;
+  color: var(--textColor);
+  outline: none;
+}
+
+.form-input-container .file-upload{
+  position: relative;
+  height: 35px;
+}
+
+.form-input-container textarea{
+  height: 70px;
+  padding: 10px 15px;
+}
+
+.optional-inputs{
+  display: flex;
+  flex-direction: column;
+}
+
+.selection-remove-button{
+  position: absolute;
+}
+
+.form-input-container label{
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 0.5rem;
+    color: var(--textColor);
+    cursor: text;
+    transition: all 200ms linear;
+    pointer-events: none;
+    background: var(--bg-primary);
+    display:inline-block;
+}
+
+.form-input-container textarea ~ label{
+  top: 20px;
+}
+
+.form-input-container.invalid label {
+  color: var(--invalid-input);
+}
+
+.form-input-container input:valid + label,
+.form-input-container input:focus + label,
+.form-input-container textarea:valid + label,
+.form-input-container textarea:focus + label,
+.form-input-container input:placeholder-shown:not(:focus) + label,
+.form-input-container textarea:placeholder-shown:not(:focus) + label {
+  top: 0%;
+  font-size: 0.8rem;
+  left: 0.8rem;
+}
+
+
+.form-control{
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-control button{
+  padding: 5px 10px;
+  background: var(--bg-primary);
+  color:var(--textColor);
+  border:  1px solid var(--border);
+  outline: none;
+}
+
+.form-control button.next-button{
+  margin:0 10px 0 auto;
+}
+
+.form-control button.prev-button{
+  margin: 0 auto 0 10px;
+}

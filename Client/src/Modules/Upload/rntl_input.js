@@ -1,17 +1,21 @@
 import React,{useState, useRef,useEffect, useCallback} from 'react';
+import './Form.css';
+import ImageUpload from './ImageUpload'
 
-export function ContactPlatform({ name, options, onChange }) {
+export function ContactPlatform({name, type, label, disabled, value, required, validity, onChange, options}) {
   const [inputValue, setInputValue] = useState('');
+  const [valid, setValidity] = useState(validity);
   const [suggestions, setSuggestions] = useState(options);
   const [selectedSuggestions, setSelectedSuggestions] = useState([]);
 
   useEffect(() => {
-    onChange(name, selectedSuggestions);
-  }, [selectedSuggestions]);
+    if(valid.isValid){
+    onChange(name, selectedSuggestions);}
+  }, [name, selectedSuggestions, inputValue, valid, onChange]);
 
   useEffect(() => {
     setSuggestions(options);
-  }, []);
+  }, [options]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -22,8 +26,8 @@ export function ContactPlatform({ name, options, onChange }) {
       setSuggestions(updatedSuggestions);
 
       const newContactPlatform = {
-        name: value,
-        text: '', // Initialize an empty text field
+        contactPlartform: value,
+        contactDetails: '', // Initialize an empty text field
       };
 
       setSelectedSuggestions([...selectedSuggestions, newContactPlatform]);
@@ -34,145 +38,135 @@ export function ContactPlatform({ name, options, onChange }) {
 
   const handleRemoveSelected = (selected) => {
     const updatedSelected = selectedSuggestions.filter((item) => item !== selected);
-    setSuggestions([...suggestions, selected.name]); // Add the removed suggestion back to the list
+    setSuggestions([...suggestions, selected.contactPlartform]); // Add the removed suggestion back to the list
     setSelectedSuggestions(updatedSelected);
   };
 
-  const handleTextChange = (index, newText) => {
+  const handleTextChange = (name, value, index) => {
     const updatedSelected = [...selectedSuggestions];
-    updatedSelected[index].text = newText;
+    updatedSelected[index].contactDetails = value;
     setSelectedSuggestions(updatedSelected);
   };
+  
+  const Contacttype = (contact)=>{
+    switch(contact){
+      case 'Whatsapp', 'Phone': return 'number'; break;
+      case 'Website', 'Instagram' , 'Facebook', 'Twitter', 'Linkedin', 'Tiktok': return 'url'; break;
+      default: return 'number'; break;
+    }
+  }
 
   return (
-    <div>
-      <input
-        type="text"
-        name={name}
-        value={inputValue}
-        onChange={handleInputChange}
-        list="suggestions"
-        placeholder="Type here..."
-      />
-      <datalist id="suggestions">
+    <div className='optional-inputs'>
+      <div className={`form-input-container with-options ${!valid.isValid && 'invalid'}`}>
+        <input name={name} type="text" data_required={required || false} disabled={disabled|| false} value={inputValue} onChange={handleInputChange} list="suggestions"/>
+        <label>{label}: {!valid.isValid && valid.message}</label>
+        <datalist id="suggestions">
         {suggestions.map((suggestion, index) => (
           <option key={index} value={suggestion} />
         ))}
-      </datalist>
-      <div>
-        <p>Selected Suggestions:</p>
-        <ul>
-          {selectedSuggestions.map((selected, index) => (
-            <li key={index}>
-              {selected.name}
-              <input
-                type="text"
-                value={selected.text}
-                onChange={(e) => handleTextChange(index, e.target.value)}
-                placeholder="Enter text..."
-              />
-              <button onClick={() => handleRemoveSelected(selected)}>Remove</button>
-            </li>
-          ))}
-        </ul>
+        </datalist>
       </div>
+      {selectedSuggestions.length !==0 && (
+        <div className='options'>
+          <ul>
+            {selectedSuggestions.map((selected, index) => (
+              <li key={index}>
+                <FormInput name='rentalName' label={selected.contactPlartform} type={() =>{Contacttype(selected.contactPlartform)}} value={selected.contactDetails} onChange={(name, value)=>{handleTextChange(name, value, index)}} validity = {{isValid: false, message:''}}/>
+                <button type='button' onClick={() => handleRemoveSelected(selected)}>Remove</button>
+            </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
 
-export function AutoInput({name, label, required, type, options, onChange}){
-  const [inputValue, setInputValue] = useState('');
+export function AutoInput({name, type, label, disabled, value, required, validity, onChange, options}){
+  const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState(options);
-  const [validity, setValidity] = useState(required ? {isValid:false,message:''} : {isValid:true, message: ''});
+  const [valid, setValidity] = useState(validity);
   const [selectedSuggestions, setSelectedSuggestions] = useState([]);
   
   useEffect(()=>{
-    onChange(name, selectedSuggestions)
-  },[selectedSuggestions])
+    if(valid.isValid){
+    onChange(name, selectedSuggestions)}
+  },[name, selectedSuggestions, inputValue, valid, onChange])
   
   useEffect(()=>{
     setSuggestions(options)
-  },[])
+  },[options])
   
+  useEffect(()=>{
+    setValidity(validity)
+  },[validity])
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const value = e.target.value;
-    setInputValue(value);
+    await setInputValue(value);
+    await setValidity(Validate(name, type, required, e.target.value));
     if (suggestions.includes(value)) {
       const updatedSuggestions = suggestions.filter((suggestion) => suggestion !== value);
-      setSuggestions(updatedSuggestions);
+      await setSuggestions(updatedSuggestions);
 
-      setSelectedSuggestions([...selectedSuggestions, value]);
-
+      await setSelectedSuggestions([...selectedSuggestions, value]);
       setInputValue('');
     }
-    onChange(name, inputValue, validity)
   };
 
   const handleRemoveSelected = (selected) => {
     const updatedSelected = selectedSuggestions.filter((item) => item !== selected);
     setSelectedSuggestions(updatedSelected);
-
     setSuggestions([...suggestions, selected]);
   };
 
   return (
-    <div>
-      <input type="text" name={name} value={inputValue} onChange={handleInputChange} list="suggestions" placeholder="Type here..."/>
-      <datalist id="suggestions">
-        {suggestions.map((suggestion, index) => (
-          <option key={index} value={suggestion} />
-        ))}
-      </datalist>
-      <div>
-        <p>Selected Suggestions:</p>
-        <ul>
-          {selectedSuggestions.map((selected, index) => (
-            <li key={index}>
-              {selected}
-              <button onClick={() => handleRemoveSelected(selected)}>Remove</button>
-            </li>
+    <div className="optional-inputs">
+      <div className={`form-input-container with-options${!valid.isValid && 'invalid'}`}>
+        <input type={type} name={name} value={inputValue} onChange={handleInputChange} list="suggestions"/>
+        <label>{label}: {!valid.isValid && valid.message}</label>
+        <datalist id="suggestions">
+          {suggestions.map((suggestion, index) => (
+            <option key={index} value={suggestion} />
           ))}
-        </ul>
+        </datalist>
       </div>
+      {selectedSuggestions.length !== 0 && (
+        <div className="options">
+          <ul>
+            {selectedSuggestions.map((selected, index) => (
+              <li key={index}>
+                {selected}
+                <button className="selection-remove-button" type="button" onClick={() => handleRemoveSelected(selected)}>Remove</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
 
-export function FormInput({name, type, value, label, required, onChange, disabled}) {
-  const [valid, setValidity] = useState({isValid: false, message:''});
-  const [inputValue, setInputValue] = useState(value);
-  
-  const handleInputChange=(e)=>{
-    setInputValue(e.target.value);
-    setValidity(Validate(name, type, required, e.target.value));
-  }
-  
-  useEffect(()=>{
-    onChange(name, inputValue);
-  },[valid])
-  
-  return (
-    <div className={`form-input-container ${!valid.isValid && 'invalid'}`}>
-      <label>{label}: {!valid.isValid && valid.message}</label>
-      <input disabled={disabled || false} name={name} type={type} value={inputValue} data_required={required || false} onChange={(e)=>{handleInputChange(e)}} />
-    </div>
-  );
-}
-
-export function TextareaRulesInput({name, defaultValue, label, required, onChange}){
+export function TextareaRulesInput({name, type, label, disabled, value, required, validity, onChange}){
   const maxCharacters = 100;
   const [text, setText] = useState('# ');
   const [rules, setRules] = useState([]);
   const [characterCount, setCharacterCount] = useState(maxCharacters);
   const textareaRef = useRef(null);
-  const [validity, setValidity] = useState(required ? {isValid:false,message:''} : {isValid:true, message: ''});
+  const [valid, setValidity] = useState(validity);
   
   useEffect(()=>{
-    onChange(name, rules, validity)
-  },[rules, validity])
-
-  const handleTextareaChange = (e) => {
+    if(valid.isValid){
+      onChange(name, rules);
+    }
+  },[name, rules, valid, onChange])
+  
+  useEffect(()=>{
+    setValidity(validity)
+  },[validity])
+  
+  const handleTextareaChange = async (e) => {
     const inputValue = e.target.value;
     const remainingCharacters = maxCharacters - inputValue.length;
     
@@ -186,8 +180,9 @@ export function TextareaRulesInput({name, defaultValue, label, required, onChang
     const filteredRules = lines
       .filter((line) => line.trim() !== '' && line.trim().startsWith('#'))
       .map((rule) => rule.trim().substring(1));
-    setRules(filteredRules);
-    setCharacterCount(remainingCharacters);
+    await setRules(filteredRules);
+    await setCharacterCount(remainingCharacters);
+    setValidity(Validate(name, type, required, e.target.value));
     textareaRef.current.style.height = 'auto';
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
   };
@@ -202,9 +197,9 @@ export function TextareaRulesInput({name, defaultValue, label, required, onChang
   };
 
   return (
-    <div>
-    <label>House rules:{characterCount}/{maxCharacters} chr</label>
-      <textarea ref={textareaRef} value={text} name={name} onChange={handleTextareaChange} onKeyDown={handleEnterPress} placeholder="# Start typing your rules here..." style={{ overflowY: 'hidden' }} maxLength={maxCharacters} />
+    <div className={`form-input-container textarea${!valid.isValid && 'invalid'}`}>
+      <textarea ref={textareaRef} value={text} name={name} onChange={handleTextareaChange} type={type} onKeyDown={handleEnterPress} data_required={required || false} disabled={value !== '' && true || false} placeholder="# Start typing your rules here..." style={{ overflowY: 'hidden' }} maxLength={maxCharacters} />
+      <label>{label}: {!valid.isValid && valid.message} {characterCount}/{maxCharacters} chr</label>
      {/* <div>
         <p>Derived Rules:</p>
         <ul>
@@ -217,219 +212,270 @@ export function TextareaRulesInput({name, defaultValue, label, required, onChang
   );
 }
 
-export function FileUpload({name, label, required, onChange, valid }) {
-  const [selectedFile, setSelectedFile] = useState(null);
+export function FileUpload({name, type, label, disabled, value, required, validity, onChange}) {
+  const [inputValue, setInputValue] = useState(null);
   const [error, setError] = useState(null);
-  const [validity, setValidity] = useState(required ? {isValid:false,message:''} : {isValid:true, message: ''});
+  const [valid, setValidity] = useState(validity);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
+    setValidity(Validate(name, type, required, file));
 
     if (!file) {
-      setSelectedFile(null);
+      setInputValue(null);
       setError('No file selected.');
       return;
     }
 
     const maxSizeInBytes = 1024 * 1024; // 1 MB
     if (file.size > maxSizeInBytes) {
-      setSelectedFile(null);
+      setInputValue(null);
       setError('File size exceeds the limit (1 MB).');
       return;
     }
 
-    setSelectedFile(file);
+    setInputValue(file);
     setError(null);
-
-    onChange(name, selectedFile, validity)
   };
 
+  useEffect(()=>{
+    if(valid.isValid){
+    onChange(name, inputValue)}
+  },[name, inputValue, valid, onChange])
+
+  useEffect(()=>{
+    setValidity(validity)
+  },[validity])
+
   return (
-    <div>
-      <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} />
+    <div className={`form-input-container ${!valid.isValid && 'invalid'}`}>
+      <label htmlFor='file-upload-input' className='file-upload'>{label}: {!valid.isValid && valid.message}</label>
+      <input hidden id="file-upload-input" type="file" name={name} accept=".pdf,.doc,.docx" onChange={handleFileChange} data_required={required || false} disabled={disabled|| false}/>
       {error && <p className="error">{error}</p>}
     </div>
   );
 }
 
-export function OptionalInputs ({ name, label, required, options, onChange }){
-  const initialInputData = {
-    [name]: false,
+export function OptionalInputs({ name, type, label, disabled, value, required, validity, onChange, options }) {
+  
+  const [InputData, setInputData] = useState({});
+  const [valid, setValidity] = useState(validity);
+
+  const handleChange = async (inputName, value) => {
+    await setInputData((prevInputData) => ({
+      ...prevInputData,
+      [inputName]: type === 'checkbox' ? !prevInputData[inputName] : value,
+    }));
+    await setValidity(Validate(name, type, required, value));
   };
 
-  options.forEach((option) => {
-    initialInputData[option] = '';
-  });
-
-  const [InputData, setInputData] = useState(initialInputData);
-  const [validity, setValidity] = useState(required ? {isValid:false,message:''} : {isValid:true, message: ''});
-  const handleInputChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-
-    setInputData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  }, []);
+  useEffect(() => {
+    if (valid.isValid) {
+      onChange(name, InputData);
+    }
+  }, [name, InputData, valid]);
 
   useEffect(() => {
-    onChange(name, InputData, validity)
-  }, [InputData, onChange]);
+    setValidity(validity);
+  }, [validity]);
 
   return (
     <div>
       <label>
-        <input type="checkbox" name={name} onChange={handleInputChange} checked={InputData[name]} />
+        <input type="checkbox" name="Deadline" onChange={(e) => handleChange(e.target.name, e.target.checked)} />
         {label}
       </label>
-
-      {options.map((option) => (
+      {InputData.Deadline&&(
+      options.map((option) => (
         <div key={option}>
-          <label>
-            {option}:
-            <input type="text" name={option} value={InputData[option]} onChange={handleInputChange} disabled={!InputData[name]} />
-          </label>
+          <FormInput name={option} label={option} type={option === 'amount' ? 'number' : 'text'} value={InputData[option]} required onChange={handleChange} disabled={!InputData.Deadline} validity={{ isValid: false, message: '' }} />
         </div>
-      ))}
+      )))}
     </div>
   );
 }
 
-export function Review ({ name, type, label, required, onChange }){
-  const maxCharacters = 200;
-  const [review, setReview] = useState('');
-  const [rating, setRating] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const isTextareaFull = review.length >= maxCharacters;
-  const [validity, setValidity] = useState(required ? {isValid:false,message:''} : {isValid:true, message: ''});
+export function FormInput({ name, type, label, disabled, value, required, validity, onChange }) {
+  const [valid, setValidity] = useState(validity);
+  const [inputValue, setInputValue] = useState(value);
 
-  const handleReviewChange = useCallback((e) => {
-    const text = e.target.value;
-    setReview(text);
-  }, []);
-
-  const handleRatingChange = useCallback((e) => {
-    setRating(e.target.value);
-  }, []);
-
-  const handleEmailChange = useCallback((e) => {
-    setUserEmail(e.target.value);
-  }, []);
-
-  useEffect(() => {
-    const reviewData = {
-      review,
-      rating,
-      userEmail,
-    };
-    onChange(name, reviewData, validity)
-  }, [validity, review, rating, userEmail]);
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    const validation = Validate(name, type, required, newValue);
+    setValidity(validation);
+    onChange(name, newValue);
+  };
+  
+  useEffect(()=>{
+    setValidity(valid)
+  }, [valid]);
 
   return (
-    <div>
-      <textarea
-        value={review}
-        onChange={handleReviewChange}
-        placeholder="Write your review..."
-        maxLength={maxCharacters}
-        className={isTextareaFull ? 'textarea-full' : ''}
-      />
-      <p>Character Count: {review.length}/{maxCharacters}</p>
-
-      <label>
-        Rating:
-        <input
-          type="text"
-          value={rating}
-          onChange={handleRatingChange}
-          placeholder="e.g., 8.5/10"
-        />
-      </label>
-
-      <label>
-        Email:
-        <input
-          type="email"
-          value={userEmail}
-          onChange={handleEmailChange}
-          placeholder="Enter your email"
-        />
-      </label>
+    <div className={`form-input-container ${valid.message && 'invalid'}`}>
+      <input disabled={disabled || false} name={name} type={type} value={inputValue} data-required={required || false} onChange={handleInputChange}/>
+      <label>{label} {valid.message}</label>
     </div>
   );
-};
+}
 
-function Validate(inputName, type, value) {
-  const error = { isValid: false, message: '' };
-  if(!required){
+export function Review({name, type, label, disabled, value, required, validity, onChange}) {
+  const maxCharacters = 200;
+  const [reviewData, setReviewData] = useState({
+    review: '',
+    rating: 0, // Add state for rating
+    reviewerUsername: '', // Add state for userEmail
+  });
+  const isTextareaFull = reviewData.review.length >= maxCharacters;
+  const [valid, setValidity] = useState(validity);
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    await setReviewData({ ...reviewData, [name]: value });
+    setValidity(Validate(name, type, required, e.target.value));
+  };
+  const handleNestedInputs = (name, value) =>{
+    setReviewData({ ...reviewData, [name]: value });
+  }
+
+  useEffect(() => {
+    if(valid.isValid){
+    onChange(name, reviewData);}
+  }, [name, reviewData, onChange]);
+  
+  useEffect(()=>{
+    setValidity(validity)
+  },[validity])
+
+  return (
+    <>
+    <div className={`form-input-container textarea ${!valid.isValid && 'invalid'}`}>
+      <textarea name="review" value={reviewData.review} onChange={handleChange} maxLength={maxCharacters} data_required={required || false} disabled={disabled|| false} className={isTextareaFull ? 'invalid' : ''}/>
+      <label>{label}: {reviewData.review.length}/{maxCharacters}</label>
+    </div>
+    
+    <FormInput name='rating' label='Rating (x.x/10)' type='number' value={reviewData.rating} required onChange={handleNestedInputs} validity = {{isValid: false, message:''}}/>
+    <FormInput name='reviewerUsername' label='Username / email' type='text' value={reviewData.reviewerUsername} onChange={handleNestedInputs} required disabled={reviewData.reviewerUsername? true : false} validity = {{isValid: false, message:''}}/>
+    </>
+  );
+}
+
+function Validate(inputName, type, required, value) {
+  const error = { isValid: true, message: '' };
+
+  if (required && !value) {
+    error.isValid = false;
+    error.message = ': Required';
     return error;
   }
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-  const textRegex = /^[A-Za-z\s]+$/;
-  const numberRegex = /^\d+$/;
 
-  switch (type) {
-    case 'email':
-      if (!emailRegex.test(value)) {
-        error.message = 'Invalid email format';
-      } else {
-        error.isValid = true;
-      }
-      break;
+  if (value) {
+    const validators = {
+      email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+      text: /^[A-Za-z\s]+$/,
+      date: /^(\d{4}-\d{2}-\d{2})$/,
+      number: /^\d+$/,
+      url: /^(ftp|http|https):\/\/[^ "]+$/
+    };
 
-    case 'text':
-      if (!textRegex.test(value)) {
-        error.message = 'Invalid text format';
-      } else {
-        error.isValid = true;
-      }
-      break;
-
-    case 'number':
-      if (!numberRegex.test(value)) {
-        error.message = 'Invalid number format';
-      } else {
-        error.isValid = true;
-      }
-      break;
-
-    default:
-      console.error('Invalid validation type');
+    const regex = validators[type];
+    if (regex && !regex.test(value)) {
+      error.isValid = false;
+      error.message = `: Invalid ${type} format!`;
+      return error;
+    }
   }
 
   return error;
 }
 
-  
 export function RentalForm() {
   const [formData, setFormData] = useState({
-    rnt_name:'',
-    rnt_pricing:''
+    rentalName:'',
+    rentalPrice:'',
+    rentalLocation:'',
+    rentalRules:[],
+    rentalAmenities:[],
+    rentalCategory:'',
+    rentalImages:[],
+    rentalManagement:{},
+    rentalContract:'',
   });
-  const [errors, setErrors] = useState({});
+  const [currentStep, setCurrentStep] = useState(1);
 
-  const handleChange = (inputName,value) => {
+  const handleChange = (inputName, value) => {
     setFormData({ ...formData, [inputName]: value });
   };
   
+  const handleNextStep = (e) => {
+    e.preventDefault();
+    const currentStepInputs = document.querySelectorAll(`[data-step="${currentStep}"] [data-required=true]`);
+    let valid = true;
+    currentStepInputs.forEach(input => {
+      if (!formData[input.name]) {valid = false;}
+    })
+    if (valid) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      alert('Please fill in all required fields before proceeding.');
+    }
+  };
+  
+  const handlePrevStep = (e) => {
+     e.preventDefault();
+    setCurrentStep(currentStep - 1);
+  }
+
+
+
+  const renderStepInputs = (step) => {
+    const step1Inputs = (
+      <div data-step="1">
+        <ContactPlatform name='contactDetails' label='Agent Contact details' options={['Whatsapp', 'Instagram', 'Phone', 'Facebook', 'Website']} onChange={handleChange} validity={{ isValid: true, message: '' }}/>
+        <FileUpload name='tenantAgreementContract' label='Tenant Agreement' required onChange={handleChange} validity={{ isValid: true, message: '' }}/>
+        <FormInput name='rentalName' label='Arp/Flat Name' type='text' value={formData.rnt_name} onChange={handleChange} message="" validity={{ isValid: false, message: '' }} required/>
+      </div>
+    );
+
+    const step2Inputs = (
+      <div data-step="2">
+        <AutoInput name='rentalCategory' label='House Category' type='text' value={formData.rnt_type} options={['bedsitter', 'one bedroom']} onChange={handleChange} validity={{ isValid: true, message: '' }} />
+        <FormInput name='rentalName' label='Arp/Flat Name' type='text' value={formData.rnt_name} onChange={handleChange} message="" validity={{ isValid: false, message: '' }}/>
+        <FormInput name='rentalPricing' label='Rental pricing' type='number' value={formData.rnt_pricing || ''} onChange={handleChange} required validity={{ isValid: false, message: '' }}/>
+      </div>
+    );
+
+    const step3Inputs = (
+      <div data-step="3">
+        <TextareaRulesInput name='rentalRules' type='text' label='House Rules' value={formData.rnt_rules || ''} onChange={handleChange} validity={{ isValid: true, message: '' }}/>
+        <OptionalInputs name='RentDue' label='Fine for late payment' options={['date', 'amount']} onChange={handleChange} validity={{ isValid: true, message: '' }} value={formData.dueRent} />
+        <Review name='userReviews' label="User Review" value={formData.review} type='text' onChange={handleChange} required validity={{ isValid: true, message: ''}}/>
+      </div>
+    );
+
+    switch (step) {
+      case 1:
+        return step1Inputs;
+      case 2:
+        return step2Inputs;
+      case 3:
+        return step3Inputs;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <>
-      <form >
-        <FormInput name='rentalName' label='Arp/Flat Name' type='text' value={formData.rnt_name} onChange={handleChange} required/>
-        <FormInput name='rentalPricing' label='Rental pricing' type='number' value={formData.rnt_pricing || ''} onChange={handleChange}/>
-        {/*<FormInput name='rentalCategory' label='Rental Cartegory' type='text' onChange={handleChange} />
-        <FormInput name='Agency' label='Agent involved' type='checkbox' onChange={handleChange} />
-        <OptionalInputs name='RentDue' options={['date', 'amount']} onChange={handleChange}/>
-        <AutoInput name='rentalType' options={['bedsitter','one bedroom']} onChange={handleChange}/>
-        <FileUpload name='agreementContract' onChange={handleChange}/>
-        <Review onChange={handleChange}/>
-        <ContactPlatform name='contactDetails' options={['whatsapp','Instagram']} onChange={handleChange}/>
-        <TextareaRulesInput name='rules' onChange={handleChange}/>*/}
-        <button type="submit">Submit</button>
-      </form>
-      <FormDisplay formData={formData} error={errors}/>
-    </>
+    <form>
+      {renderStepInputs(currentStep)}
+      <div className="form-control">
+        {currentStep > 1 && <button className="prev-button" type="button" onClick={handlePrevStep}>Back</button>}
+        {currentStep !== 3 ?
+          (<button className='next-button' type='button' onClick={handleNextStep}>Next</button>) :
+          (<button className='next-button' type='submit'>Submit</button>)
+        }
+      </div>
+    </form>
   );
 }
 
@@ -444,7 +490,6 @@ export function FormDisplay({ formData, error }) {
     </div>
   );
 }
-
 
 export default RentalForm;
 

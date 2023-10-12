@@ -114,7 +114,7 @@ function ImageUpload() {
               </div>
             ))}
           </div>
-          <button className="img-add-more" onClick={() => document.querySelector('input[type="file"]').click()}>
+          <button type="button" className="img-add-more" onClick={() => document.querySelector('input[type="file"]').click()}>
             <img src="https://uploader-assets.s3.ap-south-1.amazonaws.com/codepen-add-more-btn.png" alt="Add" />
           </button>
         </div>
@@ -134,7 +134,7 @@ function ImageUpload() {
                 <p key={index}>{line}</p>
               ))
             )}
-            <button className="toggle-textarea" onClick={() => handleToggleTextarea(activeIndex)}>
+            <button type='button' className="toggle-textarea" onClick={() => handleToggleTextarea(activeIndex)}>
               {imgList[activeIndex].showTextarea ? 'Hide' : 'Customize'}
             </button>
           </div>
